@@ -8,14 +8,14 @@ function buildTest() {
   return { auto, bracket, mario }
 }
 
-it('should return `null` when no handlers has been provided', () => {
+it('should return `undefined` when no handlers has been provided', () => {
   const mario = new Mario({})
-  expect(mario.toStyles('width', 'none')).toBe(null)
+  expect(mario.toStyles('width', 'none')).toBe(undefined)
 })
 
-it('should return `null` when the match string has not been processed by handlers', () => {
+it('should return `undefined` when the match string has not been processed by handlers', () => {
   const { mario } = buildTest()
-  expect(mario.pipe('auto').toStyles('width', 'none')).toBe(null)
+  expect(mario.pipe('auto').toStyles('width', 'none')).toBe(undefined)
 })
 
 it('should return a CSS entities when the match string has been processed', () => {
@@ -31,11 +31,11 @@ it('should return a CSS entities when the match string has been processed', () =
 it('should cleanup the pipeline after building css entities', () => {
   const { mario } = buildTest()
   mario.pipe('bracket').toStyles('width', '[10vw]')
-  expect(mario.pipe('auto').toStyles('width', '[20vw]')).toBe(null)
+  expect(mario.pipe('auto').toStyles('width', '[20vw]')).toBe(undefined)
 })
 
 it('should pass an options to a handler on processing', () => {
   const { auto, mario } = buildTest()
-  expect(mario.pipe('auto', { skip: true }).toStyles('max-width', 'auto')).toBe(null)
+  expect(mario.pipe('auto', { skip: true }).toStyles('max-width', 'auto')).toBe(undefined)
   expect(auto).toHaveBeenCalledWith('auto', { skip: true })
 })

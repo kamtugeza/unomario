@@ -4,7 +4,7 @@ export type UnoHandler<C = undefined> = (str: string, ctx: C) => string | number
 
 export interface UnoMario<H extends Record<string, UnoHandler<any>>> {
   pipe<T extends keyof H>(handler: T, options?: ExtractContext<H[T]>): UnoMario<H>
-  toStyles(properties: string | string[], matchStr: string): CSSEntries | null
+  toStyles(properties: string | string[], matchStr: string): CSSEntries | undefined
 }
 
 type ExtractContext<T> = T extends UnoHandler<infer C> ? C : never
@@ -19,14 +19,13 @@ export class Mario<H extends Record<string, UnoHandler<any>>> implements UnoMari
     return this
   }
 
-  toStyles(properties: string | string[], matchStr: string): CSSEntries | null {
+  toStyles(properties: string | string[], matchStr: string): CSSEntries | undefined {
     for (const [handler, options] of this.sequence.entries()) {
       const value = this.handlers[handler](matchStr, options)
       if (value === null) continue
       this.sequence.clear()
       return this.toArray(properties).map(property => [property, value])
     }
-    return null
   }
 
   private toArray(properties: string | string[]): string[] {
