@@ -1,0 +1,23 @@
+{
+  "name": "unomario",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@unocss/core": "^0.53.0",
+    "typescript": "^5.1.3",
+    "vitest": "^0.31.4"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  },
+  "peerDependencies": {
+    "@unocss/core": "^0.53.0"
+  }
+}
