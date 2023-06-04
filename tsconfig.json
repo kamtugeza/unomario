@@ -5,6 +5,8 @@
     "moduleResolution": "node",
     "outDir": "./dist",
     "removeComments": false,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "strictNullChecks": true,
     "strict": true,
