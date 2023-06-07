@@ -1,3 +1,5 @@
+import type { CSSEntries } from '@unocss/core'
+
 /**
  * The `UnoHandler` function processes a raw input string and returns a CSS value or `null` if
  * the handler cannot process the value. The context object can be optionally used to provide
@@ -6,7 +8,6 @@
 export type UnoHandler<C = undefined> = (str: string, ctx: C) => string | number | null 
 
 type ExtractContext<T> = T extends UnoHandler<infer C> ? C : never
-type UnoMarioStyles =  [string, string | number][]
 
 /**
  * The `UnoMario` class enables the chaining and combination of multiple handlers to process input
@@ -24,7 +25,7 @@ export interface UnoMario<H extends Record<string, UnoHandler<any>>> {
    * is valid; otherwise, it returns `undefined`. Upon completion, the pipeline automatically
    * removes all previously added handlers that were added using the `pipe` method.
    */
-  toStyles(properties: string | string[], matchStr: string): UnoMarioStyles | undefined
+  toStyles(properties: string | string[], matchStr: string): CSSEntries | undefined
 }
 
 export class Mario<H extends Record<string, UnoHandler<any>>> implements UnoMario<H> {
@@ -37,7 +38,7 @@ export class Mario<H extends Record<string, UnoHandler<any>>> implements UnoMari
     return this
   }
 
-  toStyles(properties: string | string[], matchStr: string): UnoMarioStyles | undefined {
+  toStyles(properties: string | string[], matchStr: string): CSSEntries | undefined {
     for (const [handler, options] of this.sequence.entries()) {
       const value = this.handlers[handler](matchStr, options)
       if (value === null) continue

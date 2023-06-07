@@ -11,10 +11,10 @@ Here are ongoing plans:
 
 ## Getting Started
 
-To install the library using npm, you can run the following command:
+To install the library running the following command:
 
 ```bash
-npm i -D unomario
+npm i -D unomario @unocss/core
 ```
 
 Create a set of handlers: 
