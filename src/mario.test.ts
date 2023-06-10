@@ -1,41 +1,30 @@
-import { expect, it, vi } from 'vitest'
+import type { UnoMapper } from './mario'
+import { expect, it} from 'vitest'
 import { Mario } from './mario'
 
-function buildTest() {
-  const auto = vi.fn((str, opts) => !opts?.skip && str === 'auto' ? 'auto' : null)
-  const bracket = vi.fn(str => str.startsWith('[') && str.endsWith(']') ? str.slice(1, -1) : null)
-  const mario = Mario.of({ auto, bracket })
-  return { auto, bracket, mario }
+function auto(opts?: { skip?: boolean }): UnoMapper {
+  return val => !opts?.skip && val === 'auto' ? 'auto' : null
 }
 
-it('should return `undefined` when no handlers has been provided', () => {
-  const mario = new Mario({})
-  expect(mario.toStyles('width', 'none')).toBe(undefined)
+function bracket(): UnoMapper {
+  return val => val.startsWith('[') && val.endsWith(']') ? val.slice(1, -1) : null
+}
+
+it('should return an empty array when no handlers has been provided', () => {
+  expect(Mario.of('width', 'none').toStyles())
+    .toEqual([])
 })
 
-it('should return `undefined` when the match string has not been processed by handlers', () => {
-  const { mario } = buildTest()
-  expect(mario.pipe('auto').toStyles('width', 'none')).toBe(undefined)
+it('should return an empty array when the value has not been processed by mappers', () => {
+  expect(Mario.of('width', 'none').toStyles(bracket(), auto()))
+    .toEqual([])
 })
 
-it('should return a CSS entities when the match string has been processed', () => {
-  const { mario } = buildTest()
-  expect(mario.pipe('bracket').pipe('auto').toStyles('width', 'auto'))
+it('should return a CSS entities when the value has been processed', () => {
+  expect(Mario.of('width', 'auto').toStyles(auto()))
     .toEqual([['width', 'auto']])
-  expect(mario.pipe('bracket').pipe('auto').toStyles('width', '[80px]'))
+  expect(Mario.of('width', '[80px]').toStyles(bracket(), auto()))
     .toEqual([['width', '80px']])
-  expect(mario.pipe('bracket').pipe('auto').toStyles(['margin-left', 'margin-right'], '[80px]'))
+  expect(Mario.of(['margin-left', 'margin-right'], '[80px]').toStyles(bracket(), auto()))
     .toEqual([['margin-left', '80px'], ['margin-right', '80px']])
-})
-
-it('should cleanup the pipeline after building css entities', () => {
-  const { mario } = buildTest()
-  mario.pipe('bracket').toStyles('width', '[10vw]')
-  expect(mario.pipe('auto').toStyles('width', '[20vw]')).toBe(undefined)
-})
-
-it('should pass an options to a handler on processing', () => {
-  const { auto, mario } = buildTest()
-  expect(mario.pipe('auto', { skip: true }).toStyles('max-width', 'auto')).toBe(undefined)
-  expect(auto).toHaveBeenCalledWith('auto', { skip: true })
 })

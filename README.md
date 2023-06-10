@@ -21,20 +21,23 @@ Create a set of handlers:
 
 ```ts
 // handlers.ts
-import type { UnoHandler } from 'unomario'
+import type { UnoMapper } from 'unomario'
 
-export const auto: UnoHandler<{ skip: boolean }> = (str, ctx) => !ctx?.skip && str === 'auto' ? 'auto' : null
-export const bracket: UnoHandler = str => str && str.startsWith('[') && str.endsWith(']') ? str.slice(1, -1) : null
+function auto(opts?: { skip?: boolean }): UnoMapper {
+  return val => !opts?.skip && val === 'auto' ? 'auto' : null
+}
+
+function bracket(): UnoMapper {
+  return val => val.startsWith('[') && val.endsWith(']') ? val.slice(1, -1) : null
+}
 ```
 
-Create an instance of the library using your handlers and write your `DynamicRule`:
+Do magic and build `DynamicRules` using your handlers created earlier
 
 ```ts
 import { defineConfig } from 'unocss'
 import { Mario } from 'unomario'
-import * as handlers from './handlers'
-
-const mario = new Mario(handlers)
+import { auto, bracket } from './handlers'
 
 const sizeMap = {
   h: 'height',
@@ -50,10 +53,12 @@ export default defineConfig({
    *  max-w-auto    → no styles, no selectors 🫢
    */
   rules: [
-    [/^(min-|max-)(w|h)-(.+)$/, ([_, minmax = '', hw, size]) => mario
-      .pipe('bracket')
-      .pipe('auto', { skip: minmax === 'max-' }) // max-width doesn't have the `auto` value
-      .toStyles(`${minmax}${sizeMap[hw]}`, size)
+    [/^(min-|max-)(w|h)-(.+)$/, ([_, minmax = '', hw, size]) =>
+      Mario.of(`${minmax}${sizeMap[hw]}`, size)
+        .toStyles(
+          bracket(),
+          auto({ skip: minmax === 'max-' }) // max-width doesn't have the `auto` value
+        )
     ]
   ]
 })
