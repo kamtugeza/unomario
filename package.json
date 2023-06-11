@@ -1,6 +1,6 @@
 {
   "name": "unomario",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "The lightweight helper for building UnoCSS dynamic rules",
   "keywords": [
     "unocss",
